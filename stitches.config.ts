@@ -9,15 +9,18 @@ export const { styled, getCssText, css } = createStitches({
 
 export const globalStyles = globalCss({
   '*': {
-    margin: 0,
+    boxSizing: 'border-box',
   },
 
   'html, body': {
+    margin: 0,
+    padding: 0,
     fontFamily:
       '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif',
   },
 
   a: {
+    color: 'inherit',
     textDecoration: 'none',
   },
 })

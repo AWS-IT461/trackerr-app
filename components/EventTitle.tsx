@@ -38,6 +38,9 @@ const EventTitle = styled('div', {
       },
     },
   },
+  defaultVariants: {
+    color: 'red',
+  },
 })
 
 export type EventTitleColorVariants = Stitches.VariantProps<
