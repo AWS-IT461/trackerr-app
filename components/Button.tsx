@@ -20,6 +20,12 @@ const Button = styled('button', {
 
   variants: {
     size: {
+      base: {
+        padding: '0.625rem 1rem',
+        fontSize: '0.875rem',
+        lineHeight: '20px',
+        borderRadius: '0.5rem',
+      },
       lg: {
         borderRadius: '0.5rem',
         padding: '0.875rem 1.5rem',
@@ -33,10 +39,15 @@ const Button = styled('button', {
         backgroundColor: '$primary',
         borderColor: '$primary',
       },
+      outlined: {
+        color: '#333342',
+        borderColor: '#333342',
+        backgroundColor: 'transparent',
+      },
     },
   },
 
-  defaultVariants: { size: 'lg' },
+  defaultVariants: { size: 'base' },
 })
 
 export default Button

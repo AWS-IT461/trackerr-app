@@ -46,8 +46,8 @@ export default function SignupForm() {
         <FormHint>{errors.password?.message}</FormHint>
       </FormControl>
 
-      <Button variant="primary" type="submit">
-        Signup
+      <Button variant="primary" size="lg" type="submit">
+        Sign up
       </Button>
     </StyledForm>
   )

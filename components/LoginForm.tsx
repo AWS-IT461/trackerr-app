@@ -46,7 +46,7 @@ export default function LoginForm() {
         <FormHint>{errors.password?.message}</FormHint>
       </FormControl>
 
-      <Button variant="primary" type="submit">
+      <Button variant="primary" size="lg" type="submit">
         Log in
       </Button>
     </StyledForm>
