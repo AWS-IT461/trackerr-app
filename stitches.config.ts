@@ -2,6 +2,11 @@ import { createStitches, globalCss } from '@stitches/react'
 
 export const { styled, getCssText, css } = createStitches({
   theme: {
+    colors: {
+      muted: '#666c7e',
+      error: '#ff7474',
+      primary: '#582be8',
+    },
     fonts: {},
     fontSizes: {},
   },
