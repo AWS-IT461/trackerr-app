@@ -1,6 +1,6 @@
 import { createStitches, globalCss } from '@stitches/react'
 
-export const { styled, getCssText, css } = createStitches({
+export const { styled, getCssText, css, keyframes } = createStitches({
   theme: {
     colors: {
       muted: '#666c7e',
@@ -25,22 +25,39 @@ export const { styled, getCssText, css } = createStitches({
 })
 
 export const globalStyles = globalCss({
-  '*': {
+  '*, *::before, *::after': {
     boxSizing: 'border-box',
-    margin: 0,
   },
 
+  '*': {
+    margin: 0,
+  },
+  'html, body, #__next': { height: '100%', width: '100%' },
+
   'html, body': {
-    padding: 0,
     fontFamily:
-      '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif',
+      '"Manrope",-apple-system,ui-sans-serif,system-ui,"Helvetica Neue","Helvetica", BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell, "Open Sans",sans-serif',
+  },
+
+  body: {
+    lineHeight: 1.5,
+    '-webkit-font-smoothing': 'antialiased',
+  },
+
+  'img, picture, video, canvas, svg': {
+    display: 'block',
+    maxWidth: '100%',
+  },
+
+  'input, button, textarea, select': {
+    font: 'inherit',
+  },
+
+  'p, h1, h2, h3, h4, h5, h6': {
+    overflowWrap: 'break-word',
   },
 
   a: {
-    color: 'inherit',
     textDecoration: 'none',
-  },
-  li: {
-    listStyleType: 'none',
   },
 })
