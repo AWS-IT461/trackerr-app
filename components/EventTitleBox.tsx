@@ -1,7 +1,7 @@
 import { css, styled } from '../stitches.config'
 import type * as Stitches from '@stitches/react'
 
-const EventTitle = styled('div', {
+const EventTitleBox = styled('div', {
   borderRadius: '0.25rem',
   padding: '0.25rem 0.75rem',
   textAlign: 'center',
@@ -44,7 +44,7 @@ const EventTitle = styled('div', {
 })
 
 export type EventTitleColorVariants = Stitches.VariantProps<
-  typeof EventTitle
+  typeof EventTitleBox
 >['color']
 
 export const colorList: Readonly<EventTitleColorVariants[]> = [
@@ -59,4 +59,4 @@ export const colorList: Readonly<EventTitleColorVariants[]> = [
 export function getRandomColor(textLength: number) {
   return colorList[textLength % colorList.length]
 }
-export default EventTitle
+export default EventTitleBox

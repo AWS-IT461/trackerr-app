@@ -15,6 +15,7 @@ const Home: NextPage = () => {
 
       <BackgroundBanner />
       <Navbar />
+
       <Main>
         <Card>
           <Timeline />
@@ -32,9 +33,7 @@ const Main = styled('main', {
   justifyContent: 'center',
 })
 
-const Container = styled('div', {
-  padding: '0 2rem',
-})
+const Container = styled('div', {})
 
 const BackgroundBanner = styled('div', {
   height: '25rem',
@@ -44,6 +43,6 @@ const BackgroundBanner = styled('div', {
   width: '100%',
   zIndex: -1,
   //TODO: Multiple colors
-  backgroundColor: '#37c5ab',
+  backgroundColor: '$blue',
 })
 export default Home
