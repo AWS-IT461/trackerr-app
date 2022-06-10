@@ -5,11 +5,13 @@ import Auth from '../components/Auth'
 import Button from '../components/Button'
 import { styled } from '../stitches.config'
 import {
+  Company,
   createCompany,
   CreateCompanyRequestBody,
   createCompanySchema,
   createEvent,
   createJobApplication,
+  JobApplication,
   JOB_APP_QUERY_KEY,
   useJobApplications,
 } from '../utils/api'
@@ -22,13 +24,17 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import FormHint from '../components/FormHint'
 import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons'
+import JourneyCard from '../components/JourneyCard'
 
 const DEFAULT_PAGINATION_SIZE = 5
 
 function Home() {
   // TODO: filter by user id
   const [page, setPage] = useState(1)
-  const { data: applications, status } = useJobApplications({ page })
+  const { data: applications, status } = useJobApplications({
+    page,
+    filter: { user: 1 },
+  })
 
   const [openDialog, setOpenDialog] = useState(false)
 
@@ -255,13 +261,52 @@ function Home() {
 }
 
 const Main = styled('main', {
-  maxWidth: '42.5rem',
+  maxWidth: '60rem',
   width: '100%',
   padding: '2.5rem',
 })
 
 const Container = styled('div', {})
 const Box = styled('div', {})
+
+const data: Array<{
+  journeyId: number
+  company: Company
+  latestEvent: string
+  status: JobApplication['status']
+  date: string
+}> = [
+  {
+    journeyId: 1,
+    company: {
+      id: 1,
+      name: 'Ease Solutions Pte. Ltd.',
+    },
+    latestEvent: 'Started the journey on the company.',
+    status: 'P',
+    date: 'June 10, 2022',
+  },
+  {
+    journeyId: 2,
+    company: {
+      id: 2,
+      name: 'NEC Telecom Software Inc.',
+    },
+    latestEvent: 'Conducted an HR Interview.',
+    status: 'A',
+    date: 'July 21, 2022',
+  },
+  {
+    journeyId: 3,
+    company: {
+      id: 3,
+      name: 'Alliance Software Company',
+    },
+    latestEvent: 'Performed a Live Coding Exam.',
+    status: 'R',
+    date: 'August 23, 2022',
+  },
+]
 
 const BackgroundBanner = styled('div', {
   height: '25rem',

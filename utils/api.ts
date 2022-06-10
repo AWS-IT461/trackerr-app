@@ -1,5 +1,5 @@
-import { useQuery, UseQueryOptions } from 'react-query'
-import { z } from 'zod'
+import { useQuery, UseQueryOptions, RefetchQueryFilters } from 'react-query'
+import { boolean, z } from 'zod'
 import axios from './axios'
 
 type ApplicationStatus = JobApplication['status']
@@ -26,6 +26,9 @@ type WithPagination<T> = Pick<
 const companySchema = z.object({ id: z.number(), name: z.string() })
 export type Company = z.infer<typeof companySchema>
 
+const userSchema = z.object({ id: z.number(), email: z.string().email() })
+export type User = z.infer<typeof userSchema>
+
 const eventsSchema = z.object({
   id: z.number(),
   title: z.string(),
@@ -39,7 +42,6 @@ export type Event = z.infer<typeof eventsSchema>
 
 const jobApplicationSchema = z.object({
   id: z.number(),
-  applying_date: z.string(),
   status: z.union([z.literal('P'), z.literal('A'), z.literal('R')]),
   company: companySchema,
   user: z.number(),
@@ -76,10 +78,16 @@ export const getEvents = () =>
     .then((res) => res.data)
     .then((data) => data.map((event) => eventsSchema.parse(event)))
 
-export const getJobApplications = (page = 1) =>
+interface JobApplicationsQuery {
+  user?: number
+}
+export const getJobApplications = (
+  page = 1,
+  params: JobApplicationsQuery = {}
+) =>
   axios
     .get<WithPagination<JobApplication>>('/api/applications/', {
-      params: { page },
+      params: { page, ...params },
     })
     .then((res) => res.data)
     .then((data) => ({
@@ -97,9 +105,6 @@ const createJobAppSchema = z.object({
   status: z.string().default('P'),
   company_id: z.number(),
   user: z.number(),
-
-  // wa ni gamit
-  applying_date: z.string().default('2022-01-01'),
 })
 export type CreateJobAppRequestBody = z.infer<typeof createJobAppSchema>
 export const createJobApplication = (values: CreateJobAppRequestBody) =>
@@ -154,13 +159,15 @@ export const JOB_APP_QUERY_KEY = 'applications'
 export function useJobApplications({
   page = 1,
   options,
+  filter = {},
 }: {
   page?: number
   options?: UseQueryOptions<WithPagination<JobApplication>>
+  filter?: JobApplicationsQuery
 } = {}) {
   return useQuery<WithPagination<JobApplication>>(
-    [JOB_APP_QUERY_KEY, page],
-    () => getJobApplications(page),
+    [JOB_APP_QUERY_KEY, page, filter],
+    () => getJobApplications(page, filter),
     { ...options, keepPreviousData: true }
   )
 }
