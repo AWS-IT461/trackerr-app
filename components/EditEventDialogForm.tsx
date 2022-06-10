@@ -1,6 +1,5 @@
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { useMutation } from 'react-query'
+import { useMutation, useQueryClient } from 'react-query'
 import { z } from 'zod'
 import { Box, Column, Row } from '.'
 import Button from './Button'
@@ -15,18 +14,26 @@ import {
   createEvent,
   JobApplication,
   Event,
+  patchEvent,
+  patchEventSchema,
+  PatchEventRequestBody,
+  EVENTS_QUERY_KEY,
 } from '../utils/api'
 import EventTitleBox, { getRandomColor } from './EventTitleBox'
-import { PlusIcon } from '@radix-ui/react-icons'
+import { Cross1Icon, PlusIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { styled } from '../stitches.config'
 
 export default function EditEventDialogForm({
   event,
-}: // onSubmit,
-{
-  // onSubmit: () => void
+  onSubmit,
+}: {
+  onSubmit: () => void
   event: Event
 }) {
+  const queryClient = useQueryClient()
+
   const {
     register,
     handleSubmit,
@@ -34,22 +41,24 @@ export default function EditEventDialogForm({
     setValue,
     reset,
     watch,
-  } = useForm<CreateEventRequestBody>({
-    resolver: zodResolver(createEventSchema),
+  } = useForm<PatchEventRequestBody>({
+    resolver: zodResolver(patchEventSchema),
     defaultValues: {
       user: 1,
       job_application: event.job_application,
-      tags: '',
+      tags: event.tags || '',
+      title: event.title,
+      remarks: event.remarks || '',
     },
   })
 
   const tags = watch('tags')
 
-  const { mutate } = useMutation((values: CreateEventRequestBody) =>
-    createEvent(values)
+  const { mutate } = useMutation((values: PatchEventRequestBody) =>
+    patchEvent(event.id, values)
   )
 
-  const handleOnSubmit = (values: CreateEventRequestBody) => {
+  const handleOnSubmit = (values: PatchEventRequestBody) => {
     const formatDate = (date: Date) => {
       return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
     }
@@ -59,6 +68,8 @@ export default function EditEventDialogForm({
       {
         onSuccess: () => {
           reset()
+          onSubmit()
+          queryClient.invalidateQueries(EVENTS_QUERY_KEY)
         },
       }
     )
@@ -112,14 +123,34 @@ export default function EditEventDialogForm({
             Tags <small>(e.g. Phone Interview)</small>
           </FormLabel>
           <Row css={{ gap: '0.5rem', flexWrap: 'wrap' }}>
-            {tags.split(',').map((tag, index) =>
+            {tags?.split(',').map((tag) =>
               tag.length ? (
                 <EventTitleBox
                   color={getRandomColor(tag.length)}
                   size="sm"
-                  key={index}
+                  key={tag}
+                  css={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: 8,
+                    paddingInlineEnd: 4,
+                  }}
                 >
-                  {tag}
+                  <span>{tag}</span>
+                  <IconButton
+                    onClick={() => {
+                      setValue(
+                        'tags',
+                        tags
+                          .split(',')
+                          .filter((t) => tag !== t)
+                          .join(',')
+                      )
+                    }}
+                  >
+                    <Cross1Icon height={12} width={12} />
+                  </IconButton>
                 </EventTitleBox>
               ) : null
             )}
@@ -158,10 +189,10 @@ export default function EditEventDialogForm({
                     variant="primary"
                     type="button"
                     onClick={() => {
-                      if (newTag)
+                      if (newTag && !tags?.split(',').includes(newTag))
                         setValue(
                           'tags',
-                          !tags.length ? newTag : `${tags},${newTag}`
+                          !tags?.length ? newTag : `${tags},${newTag}`
                         )
                       closeIsAdding()
                     }}
@@ -178,10 +209,25 @@ export default function EditEventDialogForm({
       <footer style={{ display: 'flex', marginBlockStart: '2rem' }}>
         <Box css={{ width: 'fit-content', marginLeft: 'auto' }}>
           <Button variant="primary" type="submit">
-            Add Event
+            Update Event
           </Button>
         </Box>
       </footer>
     </form>
   )
 }
+
+const IconButton = styled('button', {
+  all: 'unset',
+  fontFamily: 'inherit',
+  borderRadius: '0.25rem',
+  height: 18,
+  width: 18,
+  fontSize: '0.5rem',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: 'CurrentColor',
+  cursor: 'pointer',
+  '&:hover': { filter: 'brightness(0.5)' },
+})

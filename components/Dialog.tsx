@@ -99,3 +99,4 @@ export const Content = StyledContent
 export const Title = StyledTitle
 export const Description = StyledDescription
 export const Close = StyledClose
+export const CleanClose = DialogPrimitive.Close

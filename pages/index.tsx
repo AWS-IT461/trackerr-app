@@ -24,6 +24,7 @@ import FormHint from '../components/FormHint'
 import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons'
 import JourneyCard from '../components/JourneyCard'
 import { useUser } from '../utils/auth'
+import Link from 'next/link'
 
 const DEFAULT_PAGINATION_SIZE = 5
 
@@ -169,14 +170,18 @@ function Home() {
                     {/* list */}
                     <Box css={{ display: 'flex', flexDirection: 'column' }}>
                       {applications.results.reverse().map((app) => (
-                        <JourneyCard
-                          key={app.id.toString()}
-                          company={app.company}
-                          date="01-20-2022"
-                          journeyId={app.id}
-                          latestEvent="Did a phone interview."
-                          status={app.status}
-                        />
+                        <Link key={app.id} href={`/company/${app.id}`}>
+                          <a>
+                            <JourneyCard
+                              key={app.id.toString()}
+                              company={app.company}
+                              date="01-20-2022"
+                              journeyId={app.id}
+                              latestEvent="Did a phone interview."
+                              status={app.status}
+                            />
+                          </a>
+                        </Link>
                       ))}
                     </Box>
 

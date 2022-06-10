@@ -72,6 +72,15 @@ export const createEventSchema = z.object({
 export type CreateEventRequestBody = z.infer<typeof createEventSchema>
 export const createEvent = (values: CreateEventRequestBody) =>
   axios.post('/api/events/', values).then((res) => res.data)
+
+export const patchEventSchema = createEventSchema.partial()
+export type PatchEventRequestBody = z.infer<typeof patchEventSchema>
+export const patchEvent = (id: Event['id'], values: PatchEventRequestBody) =>
+  axios.patch(`/api/events/${id}/`, values).then((res) => res.data)
+
+export const deleteEvent = (id: Event['id']) =>
+  axios.delete(`/api/events/${id}/`)
+
 export const getEvents = () =>
   axios
     .get<Event[]>('/api/events/')

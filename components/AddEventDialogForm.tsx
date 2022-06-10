@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { useMutation } from 'react-query'
-import { z } from 'zod'
+import { useMutation, useQueryClient } from 'react-query'
 import { Box, Column, Row } from '.'
 import Button from './Button'
 import FormControl from './FormControl'
@@ -14,6 +13,7 @@ import {
   CreateEventRequestBody,
   createEvent,
   JobApplication,
+  EVENTS_QUERY_KEY,
 } from '../utils/api'
 import EventTitleBox, { getRandomColor } from './EventTitleBox'
 import { PlusIcon } from '@radix-ui/react-icons'
@@ -26,6 +26,7 @@ export default function AddEventDialogForm({
   job_application_id: JobApplication['id']
   onSubmit: () => void
 }) {
+  const queryClient = useQueryClient()
   const {
     register,
     handleSubmit,
@@ -55,6 +56,7 @@ export default function AddEventDialogForm({
         onSuccess: () => {
           onSubmit()
           reset()
+          queryClient.invalidateQueries(EVENTS_QUERY_KEY)
         },
       }
     )
