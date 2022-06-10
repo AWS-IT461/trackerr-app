@@ -21,34 +21,25 @@ export default function SignupForm() {
     register,
     handleSubmit,
     formState: { errors },
-    reset
   } = useForm<schema>({
     resolver: zodResolver(loginSchema),
   })
 
   const onSubmit = (values: schema) => {
     createUser(values)
-      .then(({email,password}) => {
-
+      .then(({ email, password }) => {
         obtainToken(values)
           .then(({ access }) => {
-            console.log( access )
+            console.log(access)
             setToken(access)
           })
           .then(() => router.push('/'))
-          .catch(() => {
-            toast.error('Incorrect email or password')
-            reset()
-          })
 
-        console.log({email,password})
+        console.log({ email, password })
       })
       .catch(() => {
-        console.log("error handling here")
+        toast.error('Your email has already been taken!')
       })
-
-      
-    
   }
 
   return (

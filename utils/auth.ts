@@ -9,7 +9,7 @@ interface BearState {
 
 interface UserState {
   user: User | undefined
-  setUser: (user: User) => void
+  setUser: (user?: User) => void
 }
 export const useUser = create<UserState>((set) => ({
   user: undefined,

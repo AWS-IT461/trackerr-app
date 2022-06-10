@@ -21,11 +21,16 @@ import { useMutation, useQueryClient } from 'react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import FormHint from '../components/FormHint'
-import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons'
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ExitIcon,
+} from '@radix-ui/react-icons'
 import JourneyCard from '../components/JourneyCard'
-import { useUser } from '../utils/auth'
 import Link from 'next/link'
 import { Column, Row } from '../components'
+import EventTitleBox from '../components/EventTitleBox'
+import { useAuth, useUser } from '../utils/auth'
 
 const DEFAULT_PAGINATION_SIZE = 5
 
@@ -85,6 +90,9 @@ function Home() {
     })
   }
 
+  const setToken = useAuth((s) => s.setToken)
+  const setUser = useUser((s) => s.setUser)
+
   const maxPage = applications
     ? Math.ceil(applications.count / DEFAULT_PAGINATION_SIZE)
     : 0
@@ -106,7 +114,7 @@ function Home() {
               height: '100%',
 
               // replace with header
-              paddingBlockStart: '7.5rem',
+              paddingBlockStart: '5.5rem',
             }}
           >
             <Main>
@@ -115,53 +123,75 @@ function Home() {
                   <Box
                     css={{ display: 'flex', justifyContent: 'space-between' }}
                   >
-                    <Image
-                      src={`https://avatars.dicebear.com/api/micah/${'dave@dave.com'}.svg?r=50`}
-                      alt="profile pic"
-                      height={32}
-                      width={32}
-                    />
-
-                    <Box css={{ display: 'flex', flexDirection: 'column' }}>
+                    <Column>
+                      <Image
+                        src={`https://avatars.dicebear.com/api/micah/${'dave@dave.com'}.svg?r=50`}
+                        alt="profile pic"
+                        height={32}
+                        width={32}
+                      />
                       <span>{user?.email}</span>
-                      <Box css={{ display: 'flex', gap: '1rem' }}>
-                        <div>
-                          {
-                            applications.results.filter(
-                              ({ status }) => status === 'A'
-                            ).length
-                          }{' '}
-                          Accepted
-                        </div>
-                        <div>
-                          {
-                            applications.results.filter(
-                              ({ status }) => status === 'P'
-                            ).length
-                          }{' '}
-                          Pending
-                        </div>
-                        <div>
-                          {
-                            applications.results.filter(
-                              ({ status }) => status === 'R'
-                            ).length
-                          }{' '}
-                          Rejected
-                        </div>
-                      </Box>
+                    </Column>
+
+                    <IconButton
+                      onClick={() => {
+                        // logout
+                        setToken('')
+                        setUser()
+                      }}
+                    >
+                      <ExitIcon />
+                    </IconButton>
+                  </Box>
+                </header>
+
+                <Column as="section" css={{ marginBlockStart: '2rem' }}>
+                  <Row
+                    as="header"
+                    css={{
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <h1>Companies</h1>
+
+                    <Box
+                      css={{
+                        display: 'flex',
+                        gap: '1rem',
+                      }}
+                    >
+                      <EventTitleBox color="green" size="sm">
+                        {
+                          applications.results.filter(
+                            ({ status }) => status === 'A'
+                          ).length
+                        }{' '}
+                        Accepted
+                      </EventTitleBox>
+                      <EventTitleBox color="purple" size="sm">
+                        {
+                          applications.results.filter(
+                            ({ status }) => status === 'P'
+                          ).length
+                        }{' '}
+                        Pending
+                      </EventTitleBox>
+                      <EventTitleBox color="red" size="sm">
+                        {
+                          applications.results.filter(
+                            ({ status }) => status === 'R'
+                          ).length
+                        }{' '}
+                        Rejected
+                      </EventTitleBox>
                     </Box>
 
                     <Dialog.Trigger asChild>
                       <Button variant="primary">Add Company</Button>
                     </Dialog.Trigger>
-                  </Box>
-                </header>
-
-                <Column as="section" css={{ marginBlockStart: '2rem' }}>
-                  <header>
-                    <h1>Companies</h1>
-                  </header>
+                  </Row>
+                  <header></header>
 
                   <Box
                     css={{
@@ -325,3 +355,18 @@ const BackgroundBanner = styled('div', {
   backgroundColor: '$blue',
 })
 export default Home
+
+const IconButton = styled('button', {
+  all: 'unset',
+  fontFamily: 'inherit',
+  borderRadius: '0.25rem',
+  height: 18,
+  width: 18,
+  fontSize: '0.5rem',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: 'CurrentColor',
+  cursor: 'pointer',
+  '&:hover': { filter: 'brightness(0.5)' },
+})
