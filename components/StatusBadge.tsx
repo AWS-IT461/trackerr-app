@@ -27,7 +27,7 @@ export default function StatusBadge({
 
   return (
     <Box css={{ backgroundColor: 'white' }}>
-      <DisplayIcon color={color} />
+      <DisplayIcon color={color} height={14} width={14} />
       <Text css={{ color }}>{statusLabel}</Text>
     </Box>
   )
@@ -39,7 +39,10 @@ const Box = styled('div', {
   alignItems: 'center',
   borderRadius: '6.25rem',
   border: '0.5px solid #e4e8f1',
-  padding: '0.625rem 1rem',
+  padding: '0.25rem 0.5rem',
+  width: 'fit-content',
+  fontWeight: 600,
+  fontSize: '0.825rem',
 })
 
 const Text = styled('span', { marginLeft: '0.25rem' })

@@ -3,70 +3,50 @@ import { Company, JobApplication } from '../utils/api'
 import { HomeIcon } from '@radix-ui/react-icons'
 import StatusBadge from './StatusBadge'
 import EventTitleBox, { getRandomColor } from './EventTitleBox'
+import { Column, Row } from '.'
 
 export default function JourneyCard({
-  company,
-  latestEvent,
-  status,
-  date,
+  jobApp: { company, status },
 }: {
-  journeyId: number
-  company: Company
-  latestEvent: string
-  status: JobApplication['status']
-  date: string
+  jobApp: JobApplication
 }) {
   return (
     <Box
       css={{
         flexDirection: 'column',
-        padding: '1.5rem 2.5rem 0 2.5rem',
+        padding: '1rem 1.5rem',
         width: '100%',
         border: '1px solid #e4e8f1',
-        borderRadius: '2.5rem',
+        borderRadius: '1.5rem',
       }}
     >
-      <Box
-        css={{
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}
-      >
-        <HomeIcon color="#666c7e" />
-
-        <Text css={{ fontWeight: 'bold', paddingLeft: '0.5rem' }}>
-          {company.name}
-        </Text>
-        <Box css={{ flexGrow: 1, justifyContent: 'end' }}>
-          <StatusBadge status={status} />
-        </Box>
-      </Box>
-      <WithTimeline>
-        <Box
-          css={{
-            '&::before': {
-              backgroundColor: '#fff',
-              backgroundImage:
-                'url(https://d26uz55awpmifc.cloudfront.net/assets/icons/retro-highlight-clock-ccd4a6216bd3c81f258713544147abc14af225dea97d6b70c51e9cebb92c0402.svg)',
-              content: '',
-              display: 'inline-block',
-              height: '1.5rem',
-              width: '1.5rem',
-            },
-          }}
-        />
-        <Box
-          css={{
-            marginTop: '1rem',
-            marginBottom: '0.5rem',
-          }}
-        >
-          <EventTitleBox color={getRandomColor(latestEvent.length)}>
-            {latestEvent}
+      <Column css={{ gap: '0.5rem' }}>
+        <Row css={{ alignItems: 'center' }}>
+          <HomeIcon color="#666c7e" />
+          <Text css={{ fontWeight: 'bold', paddingLeft: '0.5rem' }}>
+            {company.name}
+          </Text>
+        </Row>
+        <StatusBadge status={status} />
+        {company.contact_info.length ? (
+          <EventTitleBox
+            color={getRandomColor(company.contact_info.length)}
+            size="sm"
+            css={{ width: 'fit-content' }}
+          >
+            {company.contact_info}
           </EventTitleBox>
-        </Box>
-        <Text>{date}</Text>
-      </WithTimeline>
+        ) : null}
+        {company.address.length ? (
+          <EventTitleBox
+            color={getRandomColor(company.address.length)}
+            size="sm"
+            css={{ width: 'fit-content', textAlign: 'start' }}
+          >
+            {company.address}
+          </EventTitleBox>
+        ) : null}
+      </Column>
     </Box>
   )
 }

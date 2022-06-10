@@ -153,13 +153,15 @@ function Home() {
                     </Box>
 
                     <Dialog.Trigger asChild>
-                      <Button variant="primary">Add Journey</Button>
+                      <Button variant="primary">Add Company</Button>
                     </Dialog.Trigger>
                   </Box>
                 </header>
 
-                <section>
-                  <header>Journeys</header>
+                <Column as="section" css={{ marginBlockStart: '2rem' }}>
+                  <header>
+                    <h1>Companies</h1>
+                  </header>
 
                   <Box
                     css={{
@@ -169,18 +171,18 @@ function Home() {
                     }}
                   >
                     {/* list */}
-                    <Box css={{ display: 'flex', flexDirection: 'column' }}>
+                    <Box
+                      css={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, 1fr)',
+                        gap: '1rem',
+                        marginBlockStart: '1rem',
+                      }}
+                    >
                       {applications.results.reverse().map((app) => (
                         <Link key={app.id} href={`/company/${app.id}`}>
                           <a>
-                            <JourneyCard
-                              key={app.id.toString()}
-                              company={app.company}
-                              date="01-20-2022"
-                              journeyId={app.id}
-                              latestEvent="Did a phone interview."
-                              status={app.status}
-                            />
+                            <JourneyCard key={app.id} jobApp={app} />
                           </a>
                         </Link>
                       ))}
@@ -226,7 +228,7 @@ function Home() {
                       </Button>
                     </Box>
                   </Box>
-                </section>
+                </Column>
 
                 <Dialog.Content>
                   <form onSubmit={handleSubmit(onSubmit)}>
@@ -254,7 +256,6 @@ function Home() {
                             id="address"
                             {...register('address')}
                             placeholder="21 Jump Street"
-                            size="sm"
                           />
                           <FormHint>{errors.address?.message}</FormHint>
                         </FormControl>
@@ -272,7 +273,6 @@ function Home() {
                             id="contact_info"
                             {...register('contact_info')}
                             placeholder="09234567890"
-                            size="sm"
                           />
                           <FormHint>{errors.contact_info?.message}</FormHint>
                         </FormControl>
@@ -291,7 +291,7 @@ function Home() {
                           type="submit"
                           css={{ marginInlineStart: 'auto' }}
                         >
-                          Start Journey
+                          Create Company
                         </Button>
                       </Row>
                     </Row>
