@@ -95,7 +95,7 @@ export const retrieveJobApplication = (id: JobApplication['id']) =>
 
 const createJobAppSchema = z.object({
   status: z.string().default('P'),
-  company: z.number(),
+  company_id: z.number(),
   user: z.number(),
 
   // wa ni gamit

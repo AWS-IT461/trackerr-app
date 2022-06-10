@@ -47,7 +47,7 @@ function Home() {
       createCompany(values)
         .then(({ id }) =>
           createJobApplication({
-            company: id,
+            company_id: id,
             // TODO: change
             user: 1,
             status: 'P',
