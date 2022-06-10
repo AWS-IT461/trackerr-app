@@ -23,7 +23,12 @@ type WithPagination<T> = Pick<
   results: T[]
 }
 
-const companySchema = z.object({ id: z.number(), name: z.string() })
+const companySchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  address: z.string(),
+  contact_info: z.string(),
+})
 export type Company = z.infer<typeof companySchema>
 
 const userSchema = z.object({ id: z.number(), email: z.string().email() })
@@ -56,6 +61,8 @@ export const getCompanies = () =>
 
 export const createCompanySchema = z.object({
   name: z.string().min(1, 'Name is required'),
+  address: z.optional(z.string()),
+  contact_info: z.optional(z.string()),
 })
 export type CreateCompanyRequestBody = z.infer<typeof createCompanySchema>
 export const createCompany = (values: CreateCompanyRequestBody) =>

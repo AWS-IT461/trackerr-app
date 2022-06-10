@@ -25,6 +25,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons'
 import JourneyCard from '../components/JourneyCard'
 import { useUser } from '../utils/auth'
 import Link from 'next/link'
+import { Column, Row } from '../components'
 
 const DEFAULT_PAGINATION_SIZE = 5
 
@@ -44,7 +45,7 @@ function Home() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<{ name: string }>({
+  } = useForm<CreateCompanyRequestBody>({
     resolver: zodResolver(createCompanySchema),
   })
 
@@ -229,13 +230,7 @@ function Home() {
 
                 <Dialog.Content>
                   <form onSubmit={handleSubmit(onSubmit)}>
-                    <Box
-                      css={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '1rem',
-                      }}
-                    >
+                    <Column css={{ gap: '1rem' }}>
                       <FormControl
                         error={Boolean(errors.name?.message)}
                         css={{ display: 'flex', flexDirection: 'column' }}
@@ -244,10 +239,53 @@ function Home() {
                         <TextField id="name" {...register('name')} />
                         <FormHint>{errors.name?.message}</FormHint>
                       </FormControl>
-                    </Box>
 
-                    <footer>
-                      <Box css={{ display: 'flex', marginBlockStart: '2rem' }}>
+                      <Row css={{ gap: '1rem' }}>
+                        <FormControl
+                          error={Boolean(errors.address?.message)}
+                          css={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            flex: 1,
+                          }}
+                        >
+                          <FormLabel htmlFor="address">Address</FormLabel>
+                          <TextField
+                            id="address"
+                            {...register('address')}
+                            placeholder="21 Jump Street"
+                            size="sm"
+                          />
+                          <FormHint>{errors.address?.message}</FormHint>
+                        </FormControl>
+                        <FormControl
+                          error={Boolean(errors.contact_info?.message)}
+                          css={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                          }}
+                        >
+                          <FormLabel htmlFor="contact_info">
+                            Contact Info
+                          </FormLabel>
+                          <TextField
+                            id="contact_info"
+                            {...register('contact_info')}
+                            placeholder="09234567890"
+                            size="sm"
+                          />
+                          <FormHint>{errors.contact_info?.message}</FormHint>
+                        </FormControl>
+                      </Row>
+                    </Column>
+
+                    <Row as="footer" css={{ marginBlockStart: '2rem' }}>
+                      <Row css={{ marginInlineStart: 'auto', gap: '0.5rem' }}>
+                        <Dialog.CleanClose asChild>
+                          <Button variant="outlined" type="button">
+                            Cancel
+                          </Button>
+                        </Dialog.CleanClose>
                         <Button
                           variant="primary"
                           type="submit"
@@ -255,8 +293,8 @@ function Home() {
                         >
                           Start Journey
                         </Button>
-                      </Box>
-                    </footer>
+                      </Row>
+                    </Row>
                   </form>
                 </Dialog.Content>
               </Dialog.Root>
