@@ -3,14 +3,23 @@ import type * as Stitches from '@stitches/react'
 
 const EventTitleBox = styled('div', {
   borderRadius: '0.25rem',
-  padding: '0.25rem 0.75rem',
   textAlign: 'center',
   alignItems: 'center',
+  marginBlock: 'auto',
   textOverflow: 'ellipsis',
   backgroundColor: 'gray',
   fontWeight: 600,
 
   variants: {
+    size: {
+      sm: {
+        padding: '0.25rem 0.625rem',
+        fontSize: '0.75rem',
+      },
+      base: {
+        padding: '0.25rem 0.75rem',
+      },
+    },
     color: {
       purple: {
         backgroundColor: 'rgba(137,76,255,0.1)',
@@ -40,6 +49,7 @@ const EventTitleBox = styled('div', {
   },
   defaultVariants: {
     color: 'red',
+    size: 'base',
   },
 })
 

@@ -20,6 +20,18 @@ const Button = styled('button', {
 
   variants: {
     size: {
+      xs: {
+        padding: '0.25rem 0.5rem',
+        fontSize: '0.75rem',
+        lineHeight: '16px',
+        borderRadius: '0.25rem',
+      },
+      sm: {
+        padding: '0.5rem 0.75rem',
+        fontSize: '0.75rem',
+        lineHeight: '16px',
+        borderRadius: '0.25rem',
+      },
       base: {
         padding: '0.625rem 1rem',
         fontSize: '0.875rem',

@@ -3,12 +3,8 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Auth from '../components/Auth'
 import Button from '../components/Button'
-import Card from '../components/Card'
-import Navbar from '../components/Navbar'
-import Timeline from '../components/Timeline'
 import { styled } from '../stitches.config'
 import {
-  COMPANIES_QUERY_KEY,
   createCompany,
   CreateCompanyRequestBody,
   createCompanySchema,
@@ -25,10 +21,14 @@ import { useMutation, useQueryClient } from 'react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import FormHint from '../components/FormHint'
+import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons'
+
+const DEFAULT_PAGINATION_SIZE = 5
 
 function Home() {
   // TODO: filter by user id
-  const { data: applications, status } = useJobApplications()
+  const [page, setPage] = useState(1)
+  const { data: applications, status } = useJobApplications({ page })
 
   const [openDialog, setOpenDialog] = useState(false)
 
@@ -47,7 +47,7 @@ function Home() {
       createCompany(values)
         .then(({ id }) =>
           createJobApplication({
-            company: id,
+            company_id: id,
             // TODO: change
             user: 1,
             status: 'P',
@@ -82,7 +82,9 @@ function Home() {
     })
   }
 
-  if (status !== 'success') return null
+  const maxPage = applications
+    ? Math.ceil(applications.count / DEFAULT_PAGINATION_SIZE)
+    : 0
 
   return (
     <>
@@ -92,108 +94,161 @@ function Home() {
       </Head>
 
       <Auth>
-        <Box
-          css={{
-            display: 'flex',
-            justifyContent: 'center',
-            width: '100%',
-            height: '100%',
+        {status !== 'success' ? null : (
+          <Box
+            css={{
+              display: 'flex',
+              justifyContent: 'center',
+              width: '100%',
+              height: '100%',
 
-            // replace with header
-            paddingBlockStart: '7.5rem',
-          }}
-        >
-          <Main>
-            <header>
-              <Box css={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Image
-                  src={`https://avatars.dicebear.com/api/micah/${'dave@dave.com'}.svg?r=50`}
-                  alt="profile pic"
-                  height={32}
-                  width={32}
-                />
+              // replace with header
+              paddingBlockStart: '7.5rem',
+            }}
+          >
+            <Main>
+              <Dialog.Root open={openDialog} onOpenChange={setOpenDialog}>
+                <header>
+                  <Box
+                    css={{ display: 'flex', justifyContent: 'space-between' }}
+                  >
+                    <Image
+                      src={`https://avatars.dicebear.com/api/micah/${'dave@dave.com'}.svg?r=50`}
+                      alt="profile pic"
+                      height={32}
+                      width={32}
+                    />
 
-                <Box css={{ display: 'flex', flexDirection: 'column' }}>
-                  <span>dave@dave.com</span>
-                  <Box css={{ display: 'flex', gap: '1rem' }}>
-                    <div>
-                      {
-                        applications.results.filter(
-                          ({ status }) => status === 'A'
-                        ).length
-                      }{' '}
-                      Accepted
-                    </div>
-                    <div>
-                      {
-                        applications.results.filter(
-                          ({ status }) => status === 'P'
-                        ).length
-                      }{' '}
-                      Pending
-                    </div>
-                    <div>
-                      {
-                        applications.results.filter(
-                          ({ status }) => status === 'R'
-                        ).length
-                      }{' '}
-                      Rejected
-                    </div>
-                  </Box>
-                </Box>
-
-                <Dialog.Root open={openDialog} onOpenChange={setOpenDialog}>
-                  <Dialog.Trigger asChild>
-                    <Button variant="primary">Add Journey</Button>
-                  </Dialog.Trigger>
-                  <Dialog.Content>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                      <Box
-                        css={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: '1rem',
-                        }}
-                      >
-                        <FormControl
-                          css={{ display: 'flex', flexDirection: 'column' }}
-                        >
-                          <FormLabel htmlFor="name">Company Name</FormLabel>
-                          <TextField id="name" {...register('name')} />
-                          <FormHint>{errors.name?.message}</FormHint>
-                        </FormControl>
+                    <Box css={{ display: 'flex', flexDirection: 'column' }}>
+                      <span>dave@dave.com</span>
+                      <Box css={{ display: 'flex', gap: '1rem' }}>
+                        <div>
+                          {
+                            applications.results.filter(
+                              ({ status }) => status === 'A'
+                            ).length
+                          }{' '}
+                          Accepted
+                        </div>
+                        <div>
+                          {
+                            applications.results.filter(
+                              ({ status }) => status === 'P'
+                            ).length
+                          }{' '}
+                          Pending
+                        </div>
+                        <div>
+                          {
+                            applications.results.filter(
+                              ({ status }) => status === 'R'
+                            ).length
+                          }{' '}
+                          Rejected
+                        </div>
                       </Box>
+                    </Box>
 
-                      <footer>
-                        <Box
-                          css={{ display: 'flex', marginBlockStart: '2rem' }}
-                        >
+                    <Dialog.Trigger asChild>
+                      <Button variant="primary">Add Journey</Button>
+                    </Dialog.Trigger>
+                  </Box>
+                </header>
+
+                <section>
+                  <header>Journeys</header>
+
+                  <Box
+                    css={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '2rem',
+                    }}
+                  >
+                    {/* list */}
+                    <Box css={{ display: 'flex', flexDirection: 'column' }}>
+                      {applications.results.map((app) => (
+                        <div key={app.id}>{app.id}</div>
+                      ))}
+                    </Box>
+
+                    {/* pagination stuff */}
+                    <Box
+                      css={{
+                        display: 'flex',
+                        gap: '0.5rem',
+                        alignSelf: 'center',
+                      }}
+                    >
+                      <Button
+                        size="xs"
+                        variant="outlined"
+                        onClick={() => setPage((p) => p - 1)}
+                        disabled={page === 1}
+                      >
+                        <ChevronLeftIcon />
+                      </Button>
+
+                      {Array.from({ length: maxPage }, (_, i) => 1 + i).map(
+                        (num) => (
                           <Button
-                            variant="primary"
-                            type="submit"
-                            css={{ marginInlineStart: 'auto' }}
+                            size="xs"
+                            onClick={() => setPage(num)}
+                            key={num}
+                            variant={page === num ? 'primary' : 'outlined'}
                           >
-                            Start Journey
+                            {num}
                           </Button>
-                        </Box>
-                      </footer>
-                    </form>
-                  </Dialog.Content>
-                </Dialog.Root>
-              </Box>
-            </header>
+                        )
+                      )}
 
-            <section>
-              <header>Journeys</header>
-              <div>
-                {applications.results.map((app) => (
-                  <div key={app.id}>{app.id}</div>
-                ))}
-              </div>
-            </section>
-          </Main>
-        </Box>
+                      <Button
+                        size="xs"
+                        variant="outlined"
+                        onClick={() => setPage((p) => p + 1)}
+                        disabled={maxPage === page}
+                      >
+                        <ChevronRightIcon />
+                      </Button>
+                    </Box>
+                  </Box>
+                </section>
+
+                <Dialog.Content>
+                  <form onSubmit={handleSubmit(onSubmit)}>
+                    <Box
+                      css={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '1rem',
+                      }}
+                    >
+                      <FormControl
+                        css={{ display: 'flex', flexDirection: 'column' }}
+                      >
+                        <FormLabel htmlFor="name">Company Name</FormLabel>
+                        <TextField id="name" {...register('name')} />
+                        <FormHint>{errors.name?.message}</FormHint>
+                      </FormControl>
+                    </Box>
+
+                    <footer>
+                      <Box css={{ display: 'flex', marginBlockStart: '2rem' }}>
+                        <Button
+                          variant="primary"
+                          type="submit"
+                          css={{ marginInlineStart: 'auto' }}
+                        >
+                          Start Journey
+                        </Button>
+                      </Box>
+                    </footer>
+                  </form>
+                </Dialog.Content>
+              </Dialog.Root>
+            </Main>
+          </Box>
+        )}
       </Auth>
     </>
   )
