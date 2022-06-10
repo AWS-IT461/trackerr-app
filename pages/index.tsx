@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import Auth from '../components/Auth'
@@ -28,6 +29,8 @@ import FormHint from '../components/FormHint'
 function Home() {
   // TODO: filter by user id
   const { data: applications, status } = useJobApplications()
+
+  const [openDialog, setOpenDialog] = useState(false)
 
   const queryClient = useQueryClient()
 
@@ -71,7 +74,13 @@ function Home() {
     }
   )
 
-  const onSubmit = (values: any) => mutate(values)
+  const onSubmit = (values: any) => {
+    mutate(values, {
+      onSuccess: () => {
+        setOpenDialog(false)
+      },
+    })
+  }
 
   if (status !== 'success') return null
 
@@ -134,7 +143,7 @@ function Home() {
                   </Box>
                 </Box>
 
-                <Dialog.Root>
+                <Dialog.Root open={openDialog} onOpenChange={setOpenDialog}>
                   <Dialog.Trigger asChild>
                     <Button variant="primary">Add Journey</Button>
                   </Dialog.Trigger>
@@ -179,7 +188,7 @@ function Home() {
               <header>Journeys</header>
               <div>
                 {applications.results.map((app) => (
-                  <div key={app.id}>{app.company}</div>
+                  <div key={app.id}>{app.id}</div>
                 ))}
               </div>
             </section>
