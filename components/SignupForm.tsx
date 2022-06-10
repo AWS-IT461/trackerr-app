@@ -8,18 +8,47 @@ import FormLabel from './FormLabel'
 import FormHint from './FormHint'
 import Button from './Button'
 import FormControl from './FormControl'
+import { createUser, obtainToken } from '../utils/api'
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/router'
+import { useAuth } from '../utils/auth'
 
 export default function SignupForm() {
+  const setToken = useAuth((s) => s.setToken)
+  const router = useRouter()
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset
   } = useForm<schema>({
     resolver: zodResolver(loginSchema),
   })
 
   const onSubmit = (values: schema) => {
-    console.log({ values })
+    createUser(values)
+      .then(({email,password}) => {
+
+        obtainToken(values)
+          .then(({ access }) => {
+            console.log( access )
+            setToken(access)
+          })
+          .then(() => router.push('/'))
+          .catch(() => {
+            toast.error('Incorrect email or password')
+            reset()
+          })
+
+        console.log({email,password})
+      })
+      .catch(() => {
+        console.log("error handling here")
+      })
+
+      
+    
   }
 
   return (
