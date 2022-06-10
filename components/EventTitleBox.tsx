@@ -9,6 +9,8 @@ const EventTitleBox = styled('div', {
   textOverflow: 'ellipsis',
   backgroundColor: 'gray',
   fontWeight: 600,
+  width: 'fit-content',
+  fontSize: '130%',
 
   variants: {
     size: {
