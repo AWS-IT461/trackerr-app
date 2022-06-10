@@ -121,10 +121,13 @@ export const obtainToken = (values: z.infer<typeof obtainTokenSchema>) =>
     .post<{ refresh: string; access: string }>('/api/token/', values)
     .then((res) => res.data)
 
+export const getUser = () =>
+  axios.post('/api/users/profile/').then((res) => res.data)
+
 export const createUser = (values: z.infer<typeof obtainTokenSchema>) =>
-    axios
-      .post<{ password: string; email: string }>('/api/users/signup/', values)
-      .then((res) => res.data)
+  axios
+    .post<{ password: string; email: string }>('/api/users/signup/', values)
+    .then((res) => res.data)
 //
 // companies api-related hooks
 //

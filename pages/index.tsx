@@ -5,13 +5,11 @@ import Auth from '../components/Auth'
 import Button from '../components/Button'
 import { styled } from '../stitches.config'
 import {
-  Company,
   createCompany,
   CreateCompanyRequestBody,
   createCompanySchema,
   createEvent,
   createJobApplication,
-  JobApplication,
   JOB_APP_QUERY_KEY,
   useJobApplications,
 } from '../utils/api'
@@ -25,15 +23,16 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import FormHint from '../components/FormHint'
 import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons'
 import JourneyCard from '../components/JourneyCard'
+import { useUser } from '../utils/auth'
 
 const DEFAULT_PAGINATION_SIZE = 5
 
 function Home() {
-  // TODO: filter by user id
   const [page, setPage] = useState(1)
+  const user = useUser((s) => s.user)
   const { data: applications, status } = useJobApplications({
     page,
-    filter: { user: 1 },
+    filter: { user: user?.id },
   })
 
   const [openDialog, setOpenDialog] = useState(false)
@@ -54,22 +53,18 @@ function Home() {
         .then(({ id }) =>
           createJobApplication({
             company_id: id,
-            // TODO: change
-            user: 1,
+            user: user?.id as number,
             status: 'P',
-            applying_date: '2022-01-01',
           })
         )
         .then(({ id }) =>
           createEvent({
-            // TODO: change
-            user: 1,
+            user: user?.id as number,
             job_application: id,
 
             title: 'Started Job Application Journey',
             tags: '',
             remarks: '',
-
             date: '2022-01-01',
           })
         ),
@@ -126,7 +121,7 @@ function Home() {
                     />
 
                     <Box css={{ display: 'flex', flexDirection: 'column' }}>
-                      <span>dave@dave.com</span>
+                      <span>{user?.email}</span>
                       <Box css={{ display: 'flex', gap: '1rem' }}>
                         <div>
                           {
@@ -173,8 +168,15 @@ function Home() {
                   >
                     {/* list */}
                     <Box css={{ display: 'flex', flexDirection: 'column' }}>
-                      {applications.results.map((app) => (
-                        <div key={app.id}>{app.id}</div>
+                      {applications.results.reverse().map((app) => (
+                        <JourneyCard
+                          key={app.id.toString()}
+                          company={app.company}
+                          date="01-20-2022"
+                          journeyId={app.id}
+                          latestEvent="Did a phone interview."
+                          status={app.status}
+                        />
                       ))}
                     </Box>
 
@@ -230,6 +232,7 @@ function Home() {
                       }}
                     >
                       <FormControl
+                        error={Boolean(errors.name?.message)}
                         css={{ display: 'flex', flexDirection: 'column' }}
                       >
                         <FormLabel htmlFor="name">Company Name</FormLabel>
@@ -266,47 +269,7 @@ const Main = styled('main', {
   padding: '2.5rem',
 })
 
-const Container = styled('div', {})
 const Box = styled('div', {})
-
-const data: Array<{
-  journeyId: number
-  company: Company
-  latestEvent: string
-  status: JobApplication['status']
-  date: string
-}> = [
-  {
-    journeyId: 1,
-    company: {
-      id: 1,
-      name: 'Ease Solutions Pte. Ltd.',
-    },
-    latestEvent: 'Started the journey on the company.',
-    status: 'P',
-    date: 'June 10, 2022',
-  },
-  {
-    journeyId: 2,
-    company: {
-      id: 2,
-      name: 'NEC Telecom Software Inc.',
-    },
-    latestEvent: 'Conducted an HR Interview.',
-    status: 'A',
-    date: 'July 21, 2022',
-  },
-  {
-    journeyId: 3,
-    company: {
-      id: 3,
-      name: 'Alliance Software Company',
-    },
-    latestEvent: 'Performed a Live Coding Exam.',
-    status: 'R',
-    date: 'August 23, 2022',
-  },
-]
 
 const BackgroundBanner = styled('div', {
   height: '25rem',
