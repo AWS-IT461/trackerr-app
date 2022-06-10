@@ -3,12 +3,8 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Auth from '../components/Auth'
 import Button from '../components/Button'
-import Card from '../components/Card'
-import Navbar from '../components/Navbar'
-import Timeline from '../components/Timeline'
 import { styled } from '../stitches.config'
 import {
-  COMPANIES_QUERY_KEY,
   createCompany,
   CreateCompanyRequestBody,
   createCompanySchema,
@@ -25,10 +21,14 @@ import { useMutation, useQueryClient } from 'react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import FormHint from '../components/FormHint'
+import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons'
+
+const DEFAULT_PAGINATION_SIZE = 5
 
 function Home() {
   // TODO: filter by user id
-  const { data: applications, status } = useJobApplications()
+  const [page, setPage] = useState(1)
+  const { data: applications, status } = useJobApplications({ page })
 
   const [openDialog, setOpenDialog] = useState(false)
 
@@ -83,6 +83,8 @@ function Home() {
   }
 
   if (status !== 'success') return null
+
+  const maxPage = Math.ceil(applications.count / DEFAULT_PAGINATION_SIZE)
 
   return (
     <>
@@ -186,11 +188,53 @@ function Home() {
 
             <section>
               <header>Journeys</header>
-              <div>
-                {applications.results.map((app) => (
-                  <div key={app.id}>{app.id}</div>
-                ))}
-              </div>
+
+              <Box
+                css={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}
+              >
+                {/* list */}
+                <Box css={{ display: 'flex', flexDirection: 'column' }}>
+                  {applications.results.map((app) => (
+                    <div key={app.id}>{app.id}</div>
+                  ))}
+                </Box>
+
+                {/* pagination stuff */}
+                <Box
+                  css={{ display: 'flex', gap: '0.5rem', alignSelf: 'center' }}
+                >
+                  <Button
+                    size="xs"
+                    variant="outlined"
+                    onClick={() => setPage((p) => p - 1)}
+                    disabled={page === 1}
+                  >
+                    <ChevronLeftIcon />
+                  </Button>
+
+                  {Array.from({ length: maxPage }, (_, i) => 1 + i).map(
+                    (num) => (
+                      <Button
+                        size="xs"
+                        onClick={() => setPage(num)}
+                        key={num}
+                        variant={page === num ? 'primary' : 'outlined'}
+                      >
+                        {num}
+                      </Button>
+                    )
+                  )}
+
+                  <Button
+                    size="xs"
+                    variant="outlined"
+                    onClick={() => setPage((p) => p + 1)}
+                    disabled={maxPage === page}
+                  >
+                    <ChevronRightIcon />
+                  </Button>
+                </Box>
+              </Box>
             </section>
           </Main>
         </Box>

@@ -78,9 +78,11 @@ export const getEvents = () =>
     .then((res) => res.data)
     .then((data) => data.map((event) => eventsSchema.parse(event)))
 
-export const getJobApplications = () =>
+export const getJobApplications = (page = 1) =>
   axios
-    .get<WithPagination<JobApplication>>('/api/applications/')
+    .get<WithPagination<JobApplication>>('/api/applications/', {
+      params: { page },
+    })
     .then((res) => res.data)
     .then((data) => ({
       ...data,
@@ -142,13 +144,15 @@ export function useEvents({
 export const JOB_APP_QUERY_KEY = 'applications'
 
 export function useJobApplications({
+  page = 1,
   options,
 }: {
+  page?: number
   options?: UseQueryOptions<WithPagination<JobApplication>>
 } = {}) {
   return useQuery<WithPagination<JobApplication>>(
-    JOB_APP_QUERY_KEY,
-    getJobApplications,
-    options
+    [JOB_APP_QUERY_KEY, page],
+    () => getJobApplications(page),
+    { ...options, keepPreviousData: true }
   )
 }
