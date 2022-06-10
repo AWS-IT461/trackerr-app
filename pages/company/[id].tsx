@@ -7,6 +7,7 @@ import { useEvents, useJobApplication } from '../../utils/api'
 import * as Dialog from '../../components/Dialog'
 import { useState } from 'react'
 import AddEventDialogForm from '../../components/AddEventDialogForm'
+import EventCard from '../../components/EventCard'
 
 export default function CompanyPage() {
   const query = useRouter().query
@@ -57,7 +58,7 @@ export default function CompanyPage() {
             {/* events list */}
             <Column>
               {events?.map((e) => (
-                <div key={e.id}>{e.id}</div>
+                <EventCard event={e} key={e.id} />
               ))}
             </Column>
           </Box>

@@ -39,7 +39,6 @@ export type Event = z.infer<typeof eventsSchema>
 
 const jobApplicationSchema = z.object({
   id: z.number(),
-  applying_date: z.string(),
   status: z.union([z.literal('P'), z.literal('A'), z.literal('R')]),
   company: companySchema,
   user: z.number(),
@@ -97,9 +96,6 @@ const createJobAppSchema = z.object({
   status: z.string().default('P'),
   company_id: z.number(),
   user: z.number(),
-
-  // wa ni gamit
-  applying_date: z.string().default('2022-01-01'),
 })
 export type CreateJobAppRequestBody = z.infer<typeof createJobAppSchema>
 export const createJobApplication = (values: CreateJobAppRequestBody) =>
