@@ -52,6 +52,12 @@ const jobApplicationSchema = z.object({
   user: z.number(),
 })
 export type JobApplication = z.infer<typeof jobApplicationSchema>
+export const patchAppSchema = z.object({
+  status: z.union([z.literal('P'), z.literal('A'), z.literal('R')]),
+})
+export type PatchAppRequestBody = z.infer<typeof patchAppSchema>
+export const patchApp = (id: Event['id'], values: PatchAppRequestBody) =>
+  axios.patch(`/api/applications/${id}/`, values).then((res) => res.data)
 
 export const getCompanies = () =>
   axios
@@ -88,9 +94,9 @@ export const patchEvent = (id: Event['id'], values: PatchEventRequestBody) =>
 export const deleteEvent = (id: Event['id']) =>
   axios.delete(`/api/events/${id}/`)
 
-export const getEvents = () =>
+export const getEvents = (params: { application?: number } = {}) =>
   axios
-    .get<Event[]>('/api/events/')
+    .get<Event[]>('/api/events/', { params })
     .then((res) => res.data)
     .then((data) => data.map((event) => eventsSchema.parse(event)))
 
@@ -164,10 +170,16 @@ export const EVENTS_QUERY_KEY = 'events'
 
 export function useEvents({
   options,
+  params,
 }: {
   options?: UseQueryOptions<Event[]>
+  params?: { application?: number }
 } = {}) {
-  return useQuery<Event[]>(EVENTS_QUERY_KEY, getEvents, options)
+  return useQuery<Event[]>(
+    [EVENTS_QUERY_KEY, params],
+    () => getEvents(params),
+    options
+  )
 }
 
 //

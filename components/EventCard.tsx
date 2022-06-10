@@ -8,7 +8,7 @@ import Button from './Button'
 import * as Dialog from './Dialog'
 import EditEventDialogForm from './EditEventDialogForm'
 import { deleteEvent, EVENTS_QUERY_KEY } from '../utils/api'
-import EventTitleBox from './EventTitleBox'
+import EventTitleBox, { getRandomColor } from './EventTitleBox'
 import { TagPill } from './TagPill'
 
 export default function EventCard({ event }: { event: Event }) {
@@ -52,11 +52,13 @@ export default function EventCard({ event }: { event: Event }) {
             flex: 1,
           }}
         >
-          <EventTitleBox>{event.title}</EventTitleBox>
+          <EventTitleBox color={getRandomColor(event.title.length)}>
+            {event.title}
+          </EventTitleBox>
           <Box css={{ flexWrap: 'wrap', alignItems: 'start' }}>
             {event.tags &&
               event.tags
-                ?.split(', ')
+                ?.split(',')
                 .map((tag) => <TagPill key={tag}>{tag}</TagPill>)}
           </Box>
 

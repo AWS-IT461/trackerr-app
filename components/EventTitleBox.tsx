@@ -63,9 +63,9 @@ export const colorList: Readonly<EventTitleColorVariants[]> = [
   'purple',
   'red',
   'blue',
-  'green',
-  'lightRed',
   'pink',
+  'lightRed',
+  'green',
 ]
 
 export function getRandomColor(textLength: number) {

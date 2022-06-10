@@ -64,7 +64,7 @@ function Home() {
             user: user?.id as number,
             job_application: id,
 
-            title: 'Started Job Application Journey',
+            title: 'Started Job Application',
             tags: '',
             remarks: '',
             date: '2022-01-01',
