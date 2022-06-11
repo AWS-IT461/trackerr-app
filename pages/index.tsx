@@ -125,7 +125,7 @@ function Home() {
                   >
                     <Column>
                       <Image
-                        src={`https://avatars.dicebear.com/api/micah/${'dave@dave.com'}.svg?r=50`}
+                        src={`https://avatars.dicebear.com/api/micah/${user?.id}.svg?r=50`}
                         alt="profile pic"
                         height={32}
                         width={32}
