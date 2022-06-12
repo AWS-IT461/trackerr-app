@@ -49,7 +49,7 @@ function Home() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<CreateCompanyRequestBody>({
     resolver: zodResolver(createCompanySchema),
   })
@@ -209,7 +209,7 @@ function Home() {
                         marginBlockStart: '1rem',
                       }}
                     >
-                      {applications.results.reverse().map((app) => (
+                      {applications.results.map((app) => (
                         <Link key={app.id} href={`/company/${app.id}`}>
                           <a>
                             <JourneyCard key={app.id} jobApp={app} />
@@ -320,6 +320,7 @@ function Home() {
                           variant="primary"
                           type="submit"
                           css={{ marginInlineStart: 'auto' }}
+                          disabled={isSubmitting}
                         >
                           Create Company
                         </Button>
