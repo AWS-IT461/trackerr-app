@@ -50,6 +50,7 @@ function Home() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    reset,
   } = useForm<CreateCompanyRequestBody>({
     resolver: zodResolver(createCompanySchema),
   })
@@ -77,6 +78,7 @@ function Home() {
         ),
     {
       onSuccess: () => {
+        reset()
         queryClient.invalidateQueries(JOB_APP_QUERY_KEY)
       },
     }
@@ -317,13 +319,24 @@ function Home() {
                             Cancel
                           </Button>
                         </Dialog.CleanClose>
-                        <Button
-                          variant="primary"
-                          type="submit"
-                          css={{ marginInlineStart: 'auto' }}
-                        >
-                          Create Company
-                        </Button>
+                        {!isSubmitting ? (
+                          <Button
+                            variant="primary"
+                            type="submit"
+                            css={{ marginInlineStart: 'auto' }}
+                          >
+                            Create Company
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="primary"
+                            type="button"
+                            css={{ marginInlineStart: 'auto' }}
+                            disabled
+                          >
+                            Create Company
+                          </Button>
+                        )}
                       </Row>
                     </Row>
                   </form>
