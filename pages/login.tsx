@@ -17,6 +17,7 @@ export default function LoginScreen() {
       }}
     >
       <div>
+        <h2>Log In</h2>
         <LoginForm />
         <Box css={{ marginBlockStart: '1rem', textAlign: 'center' }}>
           <Span css={{ color: '$muted', fontSize: '0.875rem' }}>

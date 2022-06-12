@@ -17,6 +17,7 @@ export default function SignupScreen() {
       }}
     >
       <div>
+        <h2>Sign Up</h2>
         <SignupForm />
         <Box css={{ marginBlockStart: '1rem', textAlign: 'center' }}>
           <Span css={{ color: '$muted', fontSize: '0.875rem' }}>
