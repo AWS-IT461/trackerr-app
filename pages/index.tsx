@@ -83,11 +83,12 @@ function Home() {
   )
 
   const onSubmit = (values: any) => {
-    mutate(values, {
-      onSuccess: () => {
-        setOpenDialog(false)
-      },
-    })
+    if (!isSubmitting)
+      mutate(values, {
+        onSuccess: () => {
+          setOpenDialog(false)
+        },
+      })
   }
 
   const setToken = useAuth((s) => s.setToken)
@@ -320,7 +321,6 @@ function Home() {
                           variant="primary"
                           type="submit"
                           css={{ marginInlineStart: 'auto' }}
-                          disabled={isSubmitting}
                         >
                           Create Company
                         </Button>
